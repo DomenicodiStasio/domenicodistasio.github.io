@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domenico di Stasio - AI Engineer Portfolio</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        // --- COMPONENTS ---
+
+        const Icon = ({ name, size = 20, className = "" }) => {
+            React.useEffect(() => {
+                lucide.createIcons();
+            }, [name]);
+
+            return <i data-lucide={name} width={size} height={size} className={className}></i>;
+        };
+
+        const Section = ({ title, children, id, className = "" }) => (
+            <section id={id} className={`py-16 px-4 md:px-8 max-w-6xl mx-auto ${className}`}>
+                <h2 className="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3">
+                    {title}
+                    <div className="h-1 bg-slate-700 flex-grow ml-4 rounded-full opacity-50"></div>
+                </h2>
+                {children}
+            </section>
+        );
+
+        const Badge = ({ text }) => (
+            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-sm font-medium hover:bg-emerald-500/20 transition-colors cursor-default">
+                {text}
+            </span>
+        );
+
+        const Card = ({ title, subtitle, date, description, tags, link }) => (
+            <div className="glass-card p-6 rounded-xl hover:translate-y-[-4px] transition-all duration-300 shadow-lg shadow-black/20 group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+                    <div>
+                        <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">{title}</h3>
+                        <p className="text-slate-400 font-medium">{subtitle}</p>
+                    </div>
+                    {date && (
+                        <div className="text-sm text-slate-500 bg-slate-800 px-2 py-1 rounded mt-2 md:mt-0 inline-block">
+                            {date}
+                        </div>
+                    )}
+                </div>
+                
+                <div className="text-slate-300 mb-4 whitespace-pre-line leading-relaxed text-sm">
+                    {description}
+                </div>
+
+                {tags && (
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                        {tags.map((tag, i) => (
+                            <span key={i} className="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+                
+                {link && (
+                    <a href={link} target="_blank" className="inline-flex items-center gap-2 mt-4 text-emerald-400 hover:text-emerald-300 text-sm font-medium">
+                        Vedi Progetto <Icon name="external-link" size={14} />
+                    </a>
+                )}
+            </div>
+        );
+
+        // --- MAIN APP ---
+
+        const App = () => {
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+            React.useEffect(() => {
+                lucide.createIcons();
+            }, []);
+
+            const scrollTo = (id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    setIsMenuOpen(false);
+                }
+            };
+
+            const skills = [
+                "Python (PyTorch, TensorFlow)", "NLP & GenAI", "Machine Learning", 
+                "NodeJS & Express", "ReactJS", "C# & .NET", "PHP", 
+                "SQL (PostgreSQL, MySQL)", "Big Data (Hadoop, Spark)", 
+                "Docker & Kubernetes", "Terraform & Ansible", "Process Engineering (BPMN)"
+            ];
+
+            return (
+                <div className="min-h-screen bg-slate-900 selection:bg-emerald-500/30">
+                    
+                    {/* Navigation */}
+                    <nav className="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+                        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+                            <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+                                DdS.
+                            </div>
+                            
+                            {/* Desktop Menu */}
+                            <div className="hidden md:flex gap-8 text-sm font-medium text-slate-300">
+                                {['Chi Sono', 'Competenze', 'Esperienza', 'Formazione', 'Contatti'].map((item) => (
+                                    <button 
+                                        key={item} 
+                                        onClick={() => scrollTo(item.toLowerCase().replace(' ', '-'))}
+                                        className="hover:text-emerald-400 transition-colors"
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Mobile Toggle */}
+                            <button className="md:hidden text-slate-300" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                <Icon name={isMenuOpen ? "x" : "menu"} />
+                            </button>
+                        </div>
+
+                        {/* Mobile Menu */}
+                        {isMenuOpen && (
+                            <div className="md:hidden bg-slate-800 border-b border-slate-700 p-4 flex flex-col gap-4">
+                                {['Chi Sono', 'Competenze', 'Esperienza', 'Formazione', 'Contatti'].map((item) => (
+                                    <button 
+                                        key={item} 
+                                        onClick={() => scrollTo(item.toLowerCase().replace(' ', '-'))}
+                                        className="text-left text-slate-300 hover:text-emerald-400"
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <header id="chi-sono" className="pt-32 pb-20 px-4 flex flex-col items-center text-center bg-gradient-to-b from-slate-900 to-slate-800/50">
+                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-emerald-500 to-blue-600 p-1 mb-6 shadow-2xl shadow-emerald-500/20">
+                            <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+                                <Icon name="user" size={64} className="text-slate-600" />
+                            </div>
+                        </div>
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                            Domenico di Stasio
+                        </h1>
+                        <p className="text-xl md:text-2xl text-emerald-400 font-light mb-6">
+                            Artificial Intelligence Engineer
+                        </p>
+                        <p className="max-w-2xl text-slate-400 leading-relaxed mb-8">
+                            Ingegnere specializzato in Intelligenza Artificiale e Data Science con sede a Torino. 
+                            Appassionato di Generative AI, elaborazione del linguaggio naturale (NLP) e sviluppo Backend/Frontend. 
+                            Combino solide basi accademiche con esperienza pratica in automazione industriale e sviluppo software.
+                        </p>
+                        <div className="flex gap-4 flex-wrap justify-center">
+                            <a href="mailto:work.distasio@gmail.com" className="bg-emerald-500 text-slate-900 px-6 py-3 rounded-full font-bold hover:bg-emerald-400 transition-colors flex items-center gap-2">
+                                <Icon name="mail" size={18} /> Contattami
+                            </a>
+                            <a href="https://github.com/DomenicodiStasio" target="_blank" className="bg-slate-800 text-white px-6 py-3 rounded-full font-medium border border-slate-700 hover:bg-slate-700 transition-colors flex items-center gap-2">
+                                <Icon name="github" size={18} /> GitHub
+                            </a>
+                        </div>
+                    </header>
+
+                    {/* Skills */}
+                    <Section id="competenze" title="Competenze Tecniche">
+                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                            {skills.map(skill => <Badge key={skill} text={skill} />)}
+                        </div>
+                    </Section>
+
+                    {/* Experience */}
+                    <Section id="esperienza" title="Esperienza Lavorativa">
+                        <div className="grid gap-6">
+                            <Card 
+                                title="Artificial Intelligence Engineer (Student)"
+                                subtitle="Schlumberger"
+                                date="Feb 2025 - Presente"
+                                description="Tesi di Laurea Magistrale di Ricerca. Sviluppo di tecnologie per applicare la GenAI (Generative AI) nel campo della fisica delle rocce. Integrazione di LLM per la previsione dei log di pozzo."
+                                tags={["GenAI", "LLM", "Research", "Rock Physics"]}
+                            />
+                            <Card 
+                                title="Diagnostic Product Owner"
+                                subtitle="SPEA S.p.A."
+                                date="Dic 2023 - Dic 2024"
+                                description="Gestione della progettazione e sviluppo di piani diagnostici e workflow per handler e unità di stimolo. Formazione di junior Test&Maintenance. Collaborazione diretta con i clienti per soddisfare esigenze specifiche."
+                                tags={["Leadership", "Agile", "Project Management", "Process Engineering"]}
+                            />
+                            <Card 
+                                title="Software Engineer"
+                                subtitle="SPEA S.p.A."
+                                date="Mar 2023 - Dic 2023"
+                                description="Ambito automazione industriale. Sviluppo da zero di un'interfaccia operatore per setup, manutenzione e diagnosi di unità di stimolo. Sviluppo driver per cicli di movimentazione."
+                                tags={["C++", "C#", ".NET", "Industrial Automation"]}
+                            />
+                            <Card 
+                                title="Software Engineer Intern"
+                                subtitle="Ericsson S.p.A."
+                                date="Set 2022 - Feb 2023"
+                                description="Sviluppo di un'applicazione web per la sicurezza e l'automazione di un flusso procedurale di documenti con firma digitale."
+                                tags={["PHP", "SQL", "JavaScript", "Bootstrap"]}
+                            />
+                        </div>
+                    </Section>
+
+                    {/* Education */}
+                    <Section id="formazione" title="Formazione Accademica">
+                         <div className="grid md:grid-cols-2 gap-6">
+                            <Card 
+                                title="Double Degree Student"
+                                subtitle="Grenoble INP - ENSIMAG"
+                                date="2024 - 2025"
+                                description="Data Science and Process Engineering. Competenze in AI applicata all'ottimizzazione dei processi, Cloud Computing (GKE, Docker, Kubernetes) e gestione dati su larga scala."
+                            />
+                             <Card 
+                                title="Laurea Magistrale in Computer Engineering"
+                                subtitle="Politecnico di Torino"
+                                date="2023 - 2025 (Prevista)"
+                                description="Specializzazione in AI & Data Science. Media attuale: 27.6/30. Focus su Big Data (Hadoop, Spark), HCI e sviluppo web avanzato."
+                            />
+                            <Card 
+                                title="Laurea Triennale in Ingegneria Informatica"
+                                subtitle="Università degli Studi di Salerno"
+                                date="2019 - 2023"
+                                description="Voto finale: 99/110. Tesi sviluppata in azienda presso Ericsson. Solide basi in programmazione (C, Java, Assembly), database e reti."
+                            />
+                            <Card 
+                                title="Excellence Training Cybersecurity"
+                                subtitle="Università degli Studi di Napoli"
+                                date="2019"
+                                description="Programma selettivo. Focus su reverse engineering, crittografia (AES, RSA) e binary exploitation."
+                            />
+                        </div>
+                    </Section>
+
+                    {/* Languages & Certs */}
+                    <Section id="altro" title="Lingue e Certificazioni">
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="glass-card p-6 rounded-xl">
+                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <Icon name="languages" className="text-emerald-400" /> Lingue
+                                </h3>
+                                <ul className="space-y-3 text-slate-300">
+                                    <li className="flex justify-between">
+                                        <span>Italiano</span>
+                                        <span className="text-slate-500">Madrelingua</span>
+                                    </li>
+                                    <li className="flex justify-between border-t border-slate-700 pt-2">
+                                        <span>Inglese</span>
+                                        <span className="text-slate-500">IELTS 6.0 (B2-C1)</span>
+                                    </li>
+                                    <li className="flex justify-between border-t border-slate-700 pt-2">
+                                        <span>Francese</span>
+                                        <span className="text-slate-500">Livello A2</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="glass-card p-6 rounded-xl">
+                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <Icon name="award" className="text-emerald-400" /> Certificazioni
+                                </h3>
+                                <div>
+                                    <p className="font-bold text-white">IELTS 6.0 English Certification</p>
+                                    <p className="text-sm text-slate-400 mt-1">International English Language Testing System</p>
+                                    <p className="text-xs text-slate-500 mt-2">Data: Mar 2023 | ID: 221T005508DID264A</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Section>
+
+                    {/* Footer / Contact */}
+                    <footer id="contatti" className="bg-slate-950 py-12 px-4 border-t border-slate-800">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <h2 className="text-3xl font-bold text-white mb-8">Lavoriamo Insieme</h2>
+                            <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
+                                <a href="mailto:work.distasio@gmail.com" className="flex items-center justify-center gap-3 text-slate-300 hover:text-emerald-400 transition-colors p-4 bg-slate-900 rounded-lg border border-slate-800 hover:border-emerald-500/50">
+                                    <Icon name="mail" />
+                                    work.distasio@gmail.com
+                                </a>
+                                <a href="tel:+393928339451" className="flex items-center justify-center gap-3 text-slate-300 hover:text-emerald-400 transition-colors p-4 bg-slate-900 rounded-lg border border-slate-800 hover:border-emerald-500/50">
+                                    <Icon name="phone" />
+                                    +39 392 833 9451
+                                </a>
+                                <div className="flex items-center justify-center gap-3 text-slate-300 p-4 bg-slate-900 rounded-lg border border-slate-800">
+                                    <Icon name="map-pin" />
+                                    Torino, Corso Vittorio Emanuele II 32
+                                </div>
+                            </div>
+                            
+                            <p className="text-xs text-slate-600 max-w-2xl mx-auto italic">
+                                Autorizzo il trattamento dei miei dati personali ai sensi del Decreto Legislativo 30 giugno 2003, n. 196 "Codice in materia di protezione dei dati personali" e del GDPR (Regolamento UE 2016/679).
+                            </p>
+                            <p className="text-slate-700 mt-8 text-sm">
+                                &copy; {new Date().getFullYear()} Domenico di Stasio. All Rights Reserved.
+                            </p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+    </script>
+</body>
+</html>
