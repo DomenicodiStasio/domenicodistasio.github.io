@@ -1,479 +1,1532 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domenico di Stasio - AI Engineer Portfolio</title>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domenico di Stasio — Computer & AI Engineer</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
+  <style>
+    :root {
+      --bg: #050507;
+      --panel-bg: rgba(14, 12, 12, 0.74);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f5f2f0;
+      --muted: #9e9692;
+      /* Colore ramato / Copper ispirato ai tuoi capelli */
+      --accent: #d96b38;
+      --accent-bright: #f0824f;
+      --accent-glow: rgba(217, 107, 56, 0.22);
+    }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-    </style>
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-bg-text {
+      position: fixed;
+      top: 16%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(3rem, 9.8vw, 11.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+      color: rgba(255, 248, 244, 0.88);
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-bg-text.dimmed {
+      opacity: 0.05;
+      transform: translate(-50%, -40px) scale(0.95);
+    }
+
+    header {
+      position: fixed;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: rgba(18, 15, 14, 0.82);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+
+    .brand-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px 0 6px;
+      border-right: 1px solid var(--border);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-bright);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-bright);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background: var(--accent-glow);
+      color: var(--accent-bright);
+      border: 1px solid rgba(217, 107, 56, 0.5);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      cursor: pointer;
+      margin-left: 4px;
+      white-space: nowrap;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-bright);
+      transform: translateY(-1px);
+    }
+
+    #local-unlock-banner {
+      position: fixed;
+      top: 54%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 60;
+      background: rgba(16, 13, 12, 0.95);
+      border: 1px solid var(--accent);
+      padding: 24px 30px;
+      border-radius: 16px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 0 40px var(--accent-glow);
+      display: none;
+      max-width: 440px;
+    }
+
+    #local-unlock-banner p {
+      color: var(--text);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .upload-label {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 110px 4vw 90px;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.45s ease forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .home-layout {
+      min-height: calc(100vh - 200px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 20px;
+      pointer-events: none;
+    }
+
+    .home-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .glass-card {
+      pointer-events: auto;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      padding: 28px;
+      border-radius: 16px;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(217, 107, 56, 0.45);
+    }
+
+    .hero-bio-card {
+      max-width: 520px;
+    }
+
+    .mono-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent-bright);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    h1, h2 {
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(1.45rem, 2.4vw, 2.15rem);
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.62;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-outline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-bright);
+    }
+
+    .btn-outline {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+    }
+
+    .page-header {
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+      background: var(--accent-glow);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+      gap: 22px;
+    }
+
+    .project-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .project-card h3 {
+      font-size: 1.18rem;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .project-list-bullets {
+      margin: 10px 0 4px 16px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .project-list-bullets li {
+      margin-bottom: 5px;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 16px 0;
+    }
+
+    .tech-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #dfd8d4;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .project-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .project-footer a {
+      color: var(--accent-bright);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .project-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .cv-layout {
+      display: grid;
+      grid-template-columns: 1.38fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 920px) {
+      .cv-layout {
+        grid-template-columns: 1fr;
+      }
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 94%;
+      }
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      margin-top: 16px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 20px;
+      border-left: 2px solid rgba(217, 107, 56, 0.4);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 8px var(--accent-bright);
+    }
+
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent-bright);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .timeline-role {
+      font-size: 1.04rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .timeline-company {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.79rem;
+      color: #c7bdb8;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .skill-group {
+      margin-bottom: 18px;
+    }
+
+    .skill-group-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--accent-bright);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .contact-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .contact-links a:hover {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+      background: var(--accent-glow);
+      transform: translateX(4px);
+    }
+
+    .highlight-pulse {
+      animation: pulseBorder 1.8s ease;
+    }
+
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 0 0 rgba(240, 130, 79, 0.7); border-color: var(--accent-bright); }
+      70% { box-shadow: 0 0 0 18px rgba(240, 130, 79, 0); border-color: var(--accent-bright); }
+      100% { box-shadow: 0 0 0 0 rgba(240, 130, 79, 0); }
+    }
+
+    .hud-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+    }
+
+    .hud-btn {
+      background: rgba(18, 15, 14, 0.85);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .hud-btn:hover {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-200">
-    <div id="root"></div>
+<body>
 
-    <script type="text/babel">
+  <header>
+    <div class="brand-status">
+      <span class="status-dot"></span>
+      <span>DOMENICO DI STASIO</span>
+    </div>
+    <button class="nav-btn active" onclick="switchView('home', this)">01. HOME</button>
+    <button class="nav-btn" onclick="switchView('projects', this)">02. PROJECTS</button>
+    <button class="nav-btn" onclick="switchView('about', this)">03. ABOUT / CV</button>
+    <button class="nav-cta" onclick="goToContacts()">CONTACT ME</button>
+  </header>
 
-        // --- TRANSLATIONS DATA ---
-        const translations = {
-            it: {
-                nav: ['Chi Sono', 'Competenze', 'Esperienza', 'Formazione', 'Contatti'],
-                hero: {
-                    role: "Ingegnere di Intelligenza Artificiale",
-                    desc: "Ingegnere specializzato in Intelligenza Artificiale e Data Science con sede a Torino. Appassionato di Generative AI, elaborazione del linguaggio naturale (NLP) e sviluppo Backend/Frontend. Combino solide basi accademiche con esperienza pratica in automazione industriale e sviluppo software.",
-                    cta: "Contattami"
-                },
-                sections: {
-                    skills: "Competenze Tecniche",
-                    experience: "Esperienza Lavorativa",
-                    education: "Formazione Accademica",
-                    others: "Lingue e Certificazioni",
-                    contact: "Lavoriamo Insieme"
-                },
-                exp: [
-                    {
-                        title: "Artificial Intelligence Engineer (Studente)",
-                        subtitle: "Schlumberger",
-                        date: "Feb 2025 - Presente",
-                        desc: "Tesi di Laurea Magistrale di Ricerca. Sviluppo di tecnologie per applicare la GenAI (Generative AI) nel campo della fisica delle rocce. Integrazione di LLM per la previsione dei log di pozzo.",
-                        tags: ["GenAI", "LLM", "Ricerca", "Fisica delle Rocce"]
-                    },
-                    {
-                        title: "Diagnostic Product Owner",
-                        subtitle: "SPEA S.p.A.",
-                        date: "Dic 2023 - Dic 2024",
-                        desc: "Gestione della progettazione e sviluppo di piani diagnostici e workflow per handler e unità di stimolo. Formazione di junior Test&Maintenance. Collaborazione diretta con i clienti.",
-                        tags: ["Leadership", "Agile", "Gestione Progetti", "Ingegneria di Processo"]
-                    },
-                    {
-                        title: "Software Engineer",
-                        subtitle: "SPEA S.p.A.",
-                        date: "Mar 2023 - Dic 2023",
-                        desc: "Ambito automazione industriale. Sviluppo da zero di un'interfaccia operatore per setup, manutenzione e diagnosi di unità di stimolo. Sviluppo driver per cicli di movimentazione.",
-                        tags: ["C++", "C#", ".NET", "Automazione Industriale"]
-                    },
-                    {
-                        title: "Software Engineer Intern",
-                        subtitle: "Ericsson S.p.A.",
-                        date: "Set 2022 - Feb 2023",
-                        desc: "Sviluppo di un'applicazione web per la sicurezza e l'automazione di un flusso procedurale di documenti con firma digitale.",
-                        tags: ["PHP", "SQL", "JavaScript", "Bootstrap"]
-                    }
-                ],
-                edu: [
-                    {
-                        title: "Studente di Doppia Laurea",
-                        subtitle: "Grenoble INP - ENSIMAG",
-                        date: "2024 - 2025",
-                        desc: "Data Science e Ingegneria di Processo. Competenze in AI applicata all'ottimizzazione dei processi, Cloud Computing (GKE, Docker, Kubernetes) e Big Data."
-                    },
-                    {
-                        title: "Laurea Magistrale in Ingegneria Informatica",
-                        subtitle: "Politecnico di Torino",
-                        date: "2023 - 2025 (Prevista)",
-                        desc: "Specializzazione in AI & Data Science. Focus su Big Data (Hadoop, Spark), Interazione Uomo-Macchina e sviluppo web avanzato."
-                    },
-                    {
-                        title: "Laurea Triennale in Ingegneria Informatica",
-                        subtitle: "Università degli Studi di Salerno",
-                        date: "2019 - 2023",
-                        desc: "Voto finale: 99/110. Tesi sviluppata in azienda presso Ericsson. Solide basi in programmazione, database e reti."
-                    }
-                ],
-                footer: {
-                    privacy: "Autorizzo il trattamento dei miei dati personali ai sensi del Decreto Legislativo 30 giugno 2003, n. 196 e del GDPR (Regolamento UE 2016/679)."
-                }
-            },
-            en: {
-                nav: ['About Me', 'Skills', 'Experience', 'Education', 'Contact'],
-                hero: {
-                    role: "Artificial Intelligence Engineer",
-                    desc: "Engineer specializing in Artificial Intelligence and Data Science based in Turin. Passionate about Generative AI, Natural Language Processing (NLP), and Backend/Frontend development. Combining solid academic foundations with hands-on experience in industrial automation and software development.",
-                    cta: "Get in Touch"
-                },
-                sections: {
-                    skills: "Technical Skills",
-                    experience: "Work Experience",
-                    education: "Academic Education",
-                    others: "Languages & Certifications",
-                    contact: "Let's Work Together"
-                },
-                exp: [
-                    {
-                        title: "Artificial Intelligence Engineer (Student)",
-                        subtitle: "Schlumberger",
-                        date: "Feb 2025 - Present",
-                        desc: "Master's Thesis Research. Developing technologies to apply GenAI (Generative AI) in the field of rock physics. Integration of LLMs for well log prediction.",
-                        tags: ["GenAI", "LLM", "Research", "Rock Physics"]
-                    },
-                    {
-                        title: "Diagnostic Product Owner",
-                        subtitle: "SPEA S.p.A.",
-                        date: "Dec 2023 - Dec 2024",
-                        desc: "Managed the design and development of diagnostic plans and workflows for handlers and stimulus units. Training junior Test&Maintenance staff. Direct client collaboration.",
-                        tags: ["Leadership", "Agile", "Project Management", "Process Engineering"]
-                    },
-                    {
-                        title: "Software Engineer",
-                        subtitle: "SPEA S.p.A.",
-                        date: "Mar 2023 - Dec 2023",
-                        desc: "Industrial automation field. Developed an operator interface from scratch for setup, maintenance, and diagnostics of stimulus units. Developed drivers for handling cycles.",
-                        tags: ["C++", "C#", ".NET", "Industrial Automation"]
-                    },
-                    {
-                        title: "Software Engineer Intern",
-                        subtitle: "Ericsson S.p.A.",
-                        date: "Sep 2022 - Feb 2023",
-                        desc: "Developed a web application for the security and automation of a procedural document workflow with digital signatures.",
-                        tags: ["PHP", "SQL", "JavaScript", "Bootstrap"]
-                    }
-                ],
-                edu: [
-                    {
-                        title: "Double Degree Student",
-                        subtitle: "Grenoble INP - ENSIMAG",
-                        date: "2024 - 2025",
-                        desc: "Data Science and Process Engineering. Skills in AI applied to process optimization, Cloud Computing (GKE, Docker, Kubernetes), and large-scale data management."
-                    },
-                    {
-                        title: "Master's Degree in Computer Engineering",
-                        subtitle: "Politecnico di Torino",
-                        date: "2023 - 2025 (Expected)",
-                        desc: "Specialization in AI & Data Science. Focus on Big Data (Hadoop, Spark), HCI, and advanced web development."
-                    },
-                    {
-                        title: "Bachelor's Degree in Computer Engineering",
-                        subtitle: "University of Salerno",
-                        date: "2019 - 2023",
-                        desc: "Final grade: 99/110. Thesis developed at Ericsson. Solid foundations in programming, databases, and networking."
-                    }
-                ],
-                footer: {
-                    privacy: "I authorize the processing of my personal data in accordance with the GDPR (EU Regulation 2016/679)."
-                }
-            }
-        };
+  <div class="hero-bg-text" id="bg-title">Hi, I'm Domenico</div>
 
-        // --- COMPONENTS ---
+  <div id="local-unlock-banner">
+    <p>⚠️ Drag & drop an image here (or select it) to generate a 3D particle hologram.</p>
+    <label class="upload-label">
+      SELECT IMAGE
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </label>
+  </div>
 
-        const Icon = ({ name, size = 20, className = "" }) => {
-            React.useEffect(() => {
-                lucide.createIcons();
-            }, [name]);
+  <canvas id="webgl-canvas"></canvas>
 
-            return <i data-lucide={name} width={size} height={size} className={className}></i>;
-        };
-
-        const Section = ({ title, children, id, className = "" }) => (
-            <section id={id} className={`py-16 px-4 md:px-8 max-w-6xl mx-auto ${className}`}>
-                <h2 className="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3">
-                    {title}
-                    <div className="h-1 bg-slate-700 flex-grow ml-4 rounded-full opacity-50"></div>
-                </h2>
-                {children}
-            </section>
-        );
-
-        const Badge = ({ text }) => (
-            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-sm font-medium hover:bg-emerald-500/20 transition-colors cursor-default">
-                {text}
-            </span>
-        );
-
-        const Card = ({ title, subtitle, date, description, tags, link }) => (
-            <div className="glass-card p-6 rounded-xl hover:translate-y-[-4px] transition-all duration-300 shadow-lg shadow-black/20 group relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-                    <div>
-                        <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">{title}</h3>
-                        <p className="text-slate-400 font-medium">{subtitle}</p>
-                    </div>
-                    {date && (
-                        <div className="text-sm text-slate-500 bg-slate-800 px-2 py-1 rounded mt-2 md:mt-0 inline-block">
-                            {date}
-                        </div>
-                    )}
-                </div>
-                
-                <div className="text-slate-300 mb-4 whitespace-pre-line leading-relaxed text-sm">
-                    {description}
-                </div>
-
-                {tags && (
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                        {tags.map((tag, i) => (
-                            <span key={i} className="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                )}
+  <main>
+    <!-- ==========================================
+         VIEW 1: HOME
+    =========================================== -->
+    <section id="view-home" class="view-section active">
+      <div class="home-layout">
+        <div class="home-grid">
+          <div class="glass-card hero-bio-card">
+            <span class="mono-tag">[COMPUTER ENGINEER — AI & SOFTWARE SYSTEMS]</span>
+            <h2>Software Engineer @ ALTEN<br>MSc Politecnico di Torino & ENSIMAG</h2>
+            <p>
+              Computer Engineer specialized in Artificial Intelligence, Data Analytics, and Enterprise Software Systems. Experienced across industrial R&D (Schlumberger), competitive motorsport telemetry (2WheelsPoliTO), and industrial automation (SPEA, Ericsson) with Tier-1 global clients (Apple, Samsung, STMicroelectronics, Bosch, NXP).
+            </p>
+            <div class="hero-actions">
+              <button class="btn-primary" onclick="switchView('projects', document.querySelectorAll('.nav-btn')[1])">EXPLORE ALL PROJECTS →</button>
+              <button class="btn-outline" onclick="switchView('about', document.querySelectorAll('.nav-btn')[2])">FULL MASTER CV</button>
             </div>
-        );
+          </div>
 
-        // --- MAIN APP ---
+          <div class="glass-card" style="max-width: 360px;">
+            <span class="mono-tag">[CURRENT PROFILE]</span>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.77rem; color: var(--text); line-height: 1.75;">
+              📍 Nice, Provence-Alpes-Côte d'Azur, FR<br>
+              💼 Software Engineer @ ALTEN<br>
+              🎓 MSc AI & Data: Politecnico di Torino<br>
+              🌍 Master MoSIG: ENSIMAG Grenoble<br>
+              🔬 Past R&D: SLB, 2WheelsPoliTO, SPEA, Ericsson
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        const App = () => {
-            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-            const [lang, setLang] = React.useState('it');
+    <!-- ==========================================
+         VIEW 2: COMPLETE ARCHIVE OF PROJECTS
+    =========================================== -->
+    <section id="view-projects" class="view-section">
+      <div class="page-header glass-card">
+        <span class="mono-tag">[02 // COMPLETE TECHNICAL & SCIENTIFIC ARCHIVE]</span>
+        <h2>All Projects</h2>
+        <p>Full engineering portfolio spanning Master's Theses in Motorsport AI and Subsurface Deep Learning, Distributed Big Data on Google Cloud, Agentic AI, Bare-Metal ARM firmware, Full-Stack systems, and foundational engineering works.</p>
+      </div>
 
-            const t = translations[lang];
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterProjects('all', this)">ALL</button>
+        <button class="filter-chip" onclick="filterProjects('ai', this)">AI, ML & DATA SCIENCE</button>
+        <button class="filter-chip" onclick="filterProjects('bigdata', this)">BIG DATA & CLOUD</button>
+        <button class="filter-chip" onclick="filterProjects('web', this)">WEB, BPM & DB</button>
+        <button class="filter-chip" onclick="filterProjects('embedded', this)">EMBEDDED & NETWORKING</button>
+        <button class="filter-chip" onclick="filterProjects('early', this)">PROTOTYPING & EARLY WORKS</button>
+      </div>
 
-            const scrollTo = (id) => {
-                // We use the Italian IDs for anchor links consistency
-                const element = document.getElementById(id);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                    setIsMenuOpen(false);
-                }
-            };
+      <div class="projects-grid">
 
-            const skills = [
-                "Python (PyTorch, TensorFlow)", "NLP & GenAI", "Machine Learning", 
-                "NodeJS & Express", "ReactJS", "C# & .NET", "PHP", 
-                "SQL (PostgreSQL, MySQL)", "Big Data (Hadoop, Spark)", 
-                "Docker & Kubernetes", "Terraform & Ansible", "Process Engineering (BPMN)"
-            ];
+        <!-- 3.1 Master's Thesis PoliTO -->
+        <article class="glass-card project-card" data-category="ai">
+          <div>
+            <span class="mono-tag">01 // MSc THESIS • POLITECNICO DI TORINO (2025/2026)</span>
+            <h3>Applied Machine Learning to Motorsport Telemetry</h3>
+            <p>Virtual Sensing & predictive diagnostics framework for the 2WheelsPoliTO MotoStudent racing prototype.</p>
+            <ul class="project-list-bullets">
+              <li><b>Data & Physics-Based Pipeline:</b> 50 Hz multi-frequency sync (CAN, IMU, GPS), Sandwich Rule lap segmentation, Static Sag bias zeroing, and vehicle dynamics features (TPS_vel, Longitudinal Jerk, Pitch Rate).</li>
+              <li><b>Predictive Modeling:</b> Benchmarked LSTM, Bi-LSTM, 1D-CNN vs Random Forest & XGBoost with Grouped Session Split, achieving <b>MAE = 1.23 mm (R² = 0.88–0.90)</b> on suspension travel.</li>
+              <li><b>Cross-Validation Matrix & Pit-Lane App:</b> Residual matrix isolating Aggressive Riding, Mechanical Faults (oil fading), and Sensor Faults (>85% accuracy). Memory-mapped Streamlit dashboard running in <b>2.09s</b> on 8GB RAM laptops.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">Python</span>
+              <span class="tech-pill">Scikit-Learn</span>
+              <span class="tech-pill">LSTM / 1D-CNN</span>
+              <span class="tech-pill">Random Forest / XGBoost</span>
+              <span class="tech-pill">Streamlit</span>
+              <span class="tech-pill">Joblib mmap</span>
+              <span class="tech-pill">XAI</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>2WHEELSPOLITO R&D</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-            const navIds = ['chi-sono', 'competenze', 'esperienza', 'formazione', 'contatti'];
+        <!-- 3.2 Master's Thesis ENSIMAG / SLB -->
+        <article class="glass-card project-card" data-category="ai">
+          <div>
+            <span class="mono-tag">02 // MASTER THESIS • ENSIMAG & SCHLUMBERGER (2025)</span>
+            <h3>Data-Driven Generation of Mechanical Earth Models Using Contextual AI</h3>
+            <p>Deep Learning framework automating subsurface Mechanical Earth Models (MEMs) from OSDU cloud data, cutting modeling time from weeks to minutes.</p>
+            <ul class="project-list-bullets">
+              <li><b>LogFM Fine-Tuning:</b> Adapted deep 1D-CNN foundation model on NVIDIA A100 GPUs into a multi-target spatial regressor predicting full elastic and geomechanical profiles.</li>
+              <li><b>Spatial Feature Engineering:</b> Parsed 100–200 offset wells (>120k depth samples) with 50+ features (3D distances, trajectory azimuths, Cosine/RBF lithological similarity).</li>
+              <li><b>Validation & Uncertainty:</b> Leave-One-Well-Out (LOWO) split across 24 wells (+0.034 R², -18% to -26% MAE), SHAP attribution maps, Jackknife+ Conformal Prediction (92% coverage), and Techlog CLI export (<10s on GPU).</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">Python</span>
+              <span class="tech-pill">PyTorch</span>
+              <span class="tech-pill">1D-CNN (LogFM)</span>
+              <span class="tech-pill">XGBoost</span>
+              <span class="tech-pill">SHAP</span>
+              <span class="tech-pill">Conformal Prediction</span>
+              <span class="tech-pill">OSDU & Techlog</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>SLB GEOMECHANICS</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-            return (
-                <div className="min-h-screen bg-slate-900 selection:bg-emerald-500/30">
-                    
-                    {/* Navigation */}
-                    <nav className="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-                        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-                            <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
-                                DdS.
-                            </div>
-                            
-                            {/* Desktop Menu */}
-                            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-                                {t.nav.map((item, idx) => (
-                                    <button 
-                                        key={item} 
-                                        onClick={() => scrollTo(navIds[idx])}
-                                        className="hover:text-emerald-400 transition-colors"
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                                
-                                {/* Language Switcher */}
-                                <button 
-                                    onClick={() => setLang(lang === 'it' ? 'en' : 'it')}
-                                    className="ml-4 px-3 py-1 rounded border border-slate-700 hover:border-emerald-400 text-emerald-400 text-xs font-bold uppercase transition-all"
-                                >
-                                    {lang === 'it' ? 'EN' : 'IT'}
-                                </button>
-                            </div>
+        <!-- 3.3 Big Data Spark ENSIMAG -->
+        <article class="glass-card project-card" data-category="bigdata">
+          <div>
+            <span class="mono-tag">03 // BIG DATA • ENSIMAG GRENOBLE (2025)</span>
+            <h3>Big Data Analysis & Spark Performance Tuning on Cloud Datasets</h3>
+            <p>Distributed PySpark analysis of Google Cluster Data (Borg 2011 & 2019) and Alibaba PAI GPU clusters with real-time streaming.</p>
+            <ul class="project-list-bullets">
+              <li><b>Distributed GCS Pipeline:</b> Asynchronous ingestion via <code>gcs-connector-hadoop3</code>, analyzing CPU capacity loss, scheduling classes, 95th-percentile memory eviction rates, and CPI.</li>
+              <li><b>Performance Tuning:</b> Memory & executor scaling (up to 16 GB), <code>MEMORY_AND_DISK</code> caching, and DataFrame vs RDD optimization (cutting execution time from >600s to ~100s).</li>
+              <li><b>Real-Time Streaming:</b> Spark Streaming 5-second rolling CPU monitor integrated with a Dockerized Apache Kafka broker (KRaft) and daemon producer.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">Apache Spark</span>
+              <span class="tech-pill">PySpark (DF & RDD)</span>
+              <span class="tech-pill">Apache Kafka</span>
+              <span class="tech-pill">Google Cloud Storage</span>
+              <span class="tech-pill">Docker</span>
+              <span class="tech-pill">Linux</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>DISTRIBUTED SYSTEMS</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-                            {/* Mobile Toggle */}
-                            <div className="md:hidden flex items-center gap-4">
-                                <button 
-                                    onClick={() => setLang(lang === 'it' ? 'en' : 'it')}
-                                    className="px-2 py-1 rounded border border-slate-700 text-emerald-400 text-xs font-bold"
-                                >
-                                    {lang === 'it' ? 'EN' : 'IT'}
-                                </button>
-                                <button className="text-slate-300" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                                    <Icon name={isMenuOpen ? "x" : "menu"} />
-                                </button>
-                            </div>
-                        </div>
+        <!-- 3.4 Bonita BPM ENSIMAG -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">04 // PROCESS ENGINEERING • ENSIMAG GRENOBLE</span>
+            <h3>Enterprise Business Process Modeling with Bonita BPM</h3>
+            <p>End-to-end design, modeling, and execution of a multi-actor corporate workflow using BPMN 2.0 and Bonita BPM.</p>
+            <ul class="project-list-bullets">
+              <li><b>BPMN 2.0 Architecture:</b> Multi-lane organization (Employee, Manager, HR), exclusive XOR gateways, Terminate events, and Boundary Timers for automated delay/rejection handling.</li>
+              <li><b>Modular Sub-Processes & UI:</b> Decomposed "Project Making" sub-process (Specify, Test, Implement, Deploy), custom UI Designer forms with document upload widgets, and RBAC security mapping (<code>/acme/hr</code>).</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">BPMN 2.0</span>
+              <span class="tech-pill">Bonita BPM</span>
+              <span class="tech-pill">Workflow Automation</span>
+              <span class="tech-pill">UI Designer</span>
+              <span class="tech-pill">RBAC Security</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>PROCESS ENGINEERING</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-                        {/* Mobile Menu */}
-                        {isMenuOpen && (
-                            <div className="md:hidden bg-slate-800 border-b border-slate-700 p-4 flex flex-col gap-4">
-                                {t.nav.map((item, idx) => (
-                                    <button 
-                                        key={item} 
-                                        onClick={() => scrollTo(navIds[idx])}
-                                        className="text-left text-slate-300 hover:text-emerald-400"
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </nav>
+        <!-- 3.5 Bare-Metal Tetris -->
+        <article class="glass-card project-card" data-category="embedded">
+          <div>
+            <span class="mono-tag">05 // EMBEDDED FIRMWARE • POLITECNICO DI TORINO</span>
+            <h3>Bare-Metal Tetris on ARM Cortex-M3 (NXP LPC1768)</h3>
+            <p>OS-free game architecture in C and ARM Assembly for the LandTiger board with direct CMSIS register programming.</p>
+            <ul class="project-list-bullets">
+              <li><b>Event-Driven ISR Core:</b> Low-power <code>__ASM("wfi")</code> sleep loop driven by 50ms RIT scheduler (joystick GPIO polling + debouncing), prioritized NVIC external interrupts (EINT0–2), and hardware counter entropy RNG.</li>
+              <li><b>Partial GLCD Rendering & Peripherals:</b> Differential 320×240 TFT redrawing reducing bus writes from ~76,000 to a few hundred pixels/frame; 12-bit ADC potentiometer speed control with 4-LSB denoising; Timer0 square-wave audio synthesis; Power-up & Malus mechanics.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">C Embedded</span>
+              <span class="tech-pill">ARM Assembly</span>
+              <span class="tech-pill">CMSIS / NVIC</span>
+              <span class="tech-pill">NXP LPC1768</span>
+              <span class="tech-pill">ADC / Timer0 / RIT</span>
+              <span class="tech-pill">Keil uVision 5</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>BARE-METAL FIRMWARE</span>
+            <a href="https://github.com/DomenicodiStasio/tetrisGameLandtiger" target="_blank">REPO: tetrisGameLandtiger ↗</a>
+          </div>
+        </article>
 
-                    {/* Hero Section */}
-                    <header id="chi-sono" className="pt-32 pb-20 px-4 flex flex-col items-center text-center bg-gradient-to-b from-slate-900 to-slate-800/50">
-                        <div className="w-40 h-40 rounded-full bg-gradient-to-br from-emerald-500 to-blue-600 p-1 mb-6 shadow-2xl shadow-emerald-500/20">
-                            <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden border-4 border-slate-900">
-                                <img 
-                                    src="portfolio_photo.png" 
-                                    alt="Domenico di Stasio" 
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'block';
-                                    }}
-                                />
-                                <div style={{display: 'none'}}>
-                                    <Icon name="user" size={64} className="text-slate-600" />
-                                </div>
-                            </div>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-                            Domenico di Stasio
-                        </h1>
-                        <p className="text-xl md:text-2xl text-emerald-400 font-light mb-6">
-                            {t.hero.role}
-                        </p>
-                        <p className="max-w-2xl text-slate-400 leading-relaxed mb-8">
-                            {t.hero.desc}
-                        </p>
-                        <div className="flex gap-4 flex-wrap justify-center">
-                            <a href="mailto:work.distasio@gmail.com" className="bg-emerald-500 text-slate-900 px-6 py-3 rounded-full font-bold hover:bg-emerald-400 transition-colors flex items-center gap-2">
-                                <Icon name="mail" size={18} /> {t.hero.cta}
-                            </a>
-                            <a href="https://github.com/DomenicodiStasio" target="_blank" className="bg-slate-800 text-white px-6 py-3 rounded-full font-medium border border-slate-700 hover:bg-slate-700 transition-colors flex items-center gap-2">
-                                <Icon name="github" size={18} /> GitHub
-                            </a>
-                        </div>
-                    </header>
+        <!-- 3.6 JustWork HCI & Startup MVP -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">06 // HCI & STARTUP MVP • POLITECNICO DI TORINO (2023/2024)</span>
+            <h3>"JustWork" Mobile Platform (Human-Centered Design & SPA)</h3>
+            <p>Mobile-first platform connecting students to short practical "try-job" sessions, motivational interviews, and structured HR feedback ("learn by trying").</p>
+            <ul class="project-list-bullets">
+              <li><b>HCI Research & Prototyping:</b> Needfinding interviews, storyboards, paper prototypes, 5 laboratory Heuristic Evaluations (36 Nielsen violations analyzed), and interactive Figma medium-fi prototype.</li>
+              <li><b>Full-Stack High-Fi SPA:</b> Built with React.js (React Router, React-Webcam for live interview simulation), Node.js/Express, and SQLite. Validated via field Usability Testing achieving an <b>82.5/100 SUS score</b>.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">React.js</span>
+              <span class="tech-pill">Node.js / Express</span>
+              <span class="tech-pill">SQLite</span>
+              <span class="tech-pill">Figma</span>
+              <span class="tech-pill">HCI & Usability (SUS 82.5)</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>FULL-STACK & UX/UI</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-                    {/* Skills */}
-                    <Section id="competenze" title={t.sections.skills}>
-                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                            {skills.map(skill => <Badge key={skill} text={skill} />)}
-                        </div>
-                    </Section>
+        <!-- 3.7 Guess Who Full-Stack -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">07 // FULL-STACK WEB • POLITECNICO DI TORINO</span>
+            <h3>Interactive "Guess Who?" Web Application</h3>
+            <p>Single-Page Application implementing the classic guessing game with multiple difficulty tiers, user authentication, and match history.</p>
+            <ul class="project-list-bullets">
+              <li><b>Architecture:</b> Modular React SPA (Game, Try, End, History components) communicating with public and protected Node.js/Express RESTful APIs.</li>
+              <li><b>Security & Persistence:</b> Session-based authentication with cryptographic password hashing & salting, backed by a relational SQLite database (users, games, 10-attribute objects).</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">React.js</span>
+              <span class="tech-pill">Node.js / Express</span>
+              <span class="tech-pill">RESTful APIs</span>
+              <span class="tech-pill">SQLite</span>
+              <span class="tech-pill">Session Auth (Hash & Salt)</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>FULL-STACK SPA</span>
+            <a href="https://github.com/DomenicodiStasio/guessWhoGame" target="_blank">REPO: guessWhoGame ↗</a>
+          </div>
+        </article>
 
-                    {/* Experience */}
-                    <Section id="esperienza" title={t.sections.experience}>
-                        <div className="grid gap-6">
-                            {t.exp.map((item, idx) => (
-                                <Card 
-                                    key={idx}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    date={item.date}
-                                    description={item.desc}
-                                    tags={item.tags}
-                                />
-                            ))}
-                        </div>
-                    </Section>
+        <!-- 3.8 IdeaBot Agentic AI -->
+        <article class="glass-card project-card" data-category="ai">
+          <div>
+            <span class="mono-tag">08 // AGENTIC AI & AUTOMATION</span>
+            <h3>IdeaBot: Telegram Voice-to-Categorized Idea Organizer</h3>
+            <p>Personal cognitive assistant leveraging multimodal Agentic AI to capture voice notes on the go, extract semantic metadata, and render instant reports.</p>
+            <ul class="project-list-bullets">
+              <li><b>Multimodal LLM Pipeline:</b> Telegram Bot capturing <code>.oga</code> voice notes, ultra-fast transcription via Groq/Whisper STT, and structured semantic categorization (Category, Priority, Difficulty) via Google Gemini LLM in n8n.</li>
+              <li><b>Pure Binary HTML Generator:</b> Custom Node.js binary buffer node (<code>prepareBinaryData</code>) compiling JSON records into self-contained styled HTML reports delivered via <code>/idealist</code>.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">Agentic AI</span>
+              <span class="tech-pill">Google Gemini LLM</span>
+              <span class="tech-pill">Groq / Whisper STT</span>
+              <span class="tech-pill">n8n Orchestration</span>
+              <span class="tech-pill">Telegram Bot API</span>
+              <span class="tech-pill">Node.js</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>AGENTIC WORKFLOW</span>
+            <a href="https://github.com/DomenicodiStasio/AgenticAI_IdeaBot" target="_blank">REPO: AgenticAI_IdeaBot ↗</a>
+          </div>
+        </article>
 
-                    {/* Education */}
-                    <Section id="formazione" title={t.sections.education}>
-                         <div className="grid md:grid-cols-2 gap-6">
-                            {t.edu.map((item, idx) => (
-                                <Card 
-                                    key={idx}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    date={item.date}
-                                    description={item.desc}
-                                />
-                            ))}
-                        </div>
-                    </Section>
+        <!-- 3.9 BSc Thesis Ericsson -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">09 // BSc THESIS • UNIV. OF SALERNO & ERICSSON S.P.A. (2022/2023)</span>
+            <h3>Security & Automation of a Legal NDA Document Workflow</h3>
+            <p>Enterprise web application automating sequential 3-tier digital signatures (Applicant, Manager, CSM/LISM) for legal NDAs at Ericsson.</p>
+            <ul class="project-list-bullets">
+              <li><b>BPMN & DB Optimization:</b> Conceptual/logical E-R modeling and redundancy optimization slashing database accesses from <b>14M to 2M/year</b> with only 42 kB overhead.</li>
+              <li><b>Security & Dynamic PDF:</b> SQL Injection prevention via Prepared Statements, session ID regeneration, role-based access control, and client-side dynamic PDF metadata injection via <b>PDFLib</b>.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">PHP</span>
+              <span class="tech-pill">JavaScript (PDFLib)</span>
+              <span class="tech-pill">MySQL / PostgreSQL</span>
+              <span class="tech-pill">BPMN</span>
+              <span class="tech-pill">Web Security</span>
+              <span class="tech-pill">Bootstrap</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>ERICSSON R&D THESIS</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-                    {/* Languages & Certs */}
-                    <Section id="altro" title={t.sections.others}>
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div className="glass-card p-6 rounded-xl">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Icon name="languages" className="text-emerald-400" /> {lang === 'it' ? 'Lingue' : 'Languages'}
-                                </h3>
-                                <ul className="space-y-3 text-slate-300">
-                                    <li className="flex justify-between">
-                                        <span>{lang === 'it' ? 'Italiano' : 'Italian'}</span>
-                                        <span className="text-slate-500">{lang === 'it' ? 'Madrelingua' : 'Native'}</span>
-                                    </li>
-                                    <li className="flex justify-between border-t border-slate-700 pt-2">
-                                        <span>{lang === 'it' ? 'Inglese' : 'English'}</span>
-                                        <span className="text-slate-500">IELTS 6.0 (B2-C1)</span>
-                                    </li>
-                                    <li className="flex justify-between border-t border-slate-700 pt-2">
-                                        <span>{lang === 'it' ? 'Francese' : 'French'}</span>
-                                        <span className="text-slate-500">{lang === 'it' ? 'Livello A2' : 'A2 Level'}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="glass-card p-6 rounded-xl">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Icon name="award" className="text-emerald-400" /> Certifications
-                                </h3>
-                                <div>
-                                    <p className="font-bold text-white">IELTS 6.0 English Certification</p>
-                                    <p className="text-sm text-slate-400 mt-1">International English Language Testing System</p>
-                                    <p className="text-xs text-slate-500 mt-2">Date: Mar 2023 | ID: 221T005508DID264A</p>
-                                </div>
-                            </div>
-                        </div>
-                    </Section>
+        <!-- 3.10 MovieLife -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">10 // FULL-STACK WEB • UNIVERSITY OF SALERNO (2021/2022)</span>
+            <h3>"MovieLife" — Film Catalog & Review Platform</h3>
+            <p>Interactive web platform for browsing movie catalogs, watching trailers, managing favorites, and publishing star-rated reviews.</p>
+            <ul class="project-list-bullets">
+              <li><b>Features:</b> Modular PHP architecture with multi-criteria search (genre, cast, director, title), two-tier access control (Anonymous vs Verified User with private profile), and relational DB backend.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">PHP</span>
+              <span class="tech-pill">Relational SQL</span>
+              <span class="tech-pill">JavaScript</span>
+              <span class="tech-pill">HTML5 / CSS3</span>
+              <span class="tech-pill">User Auth</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>WEB TECHNOLOGIES</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
 
-                    {/* Footer / Contact */}
-                    <footer id="contatti" className="bg-slate-950 py-12 px-4 border-t border-slate-800">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h2 className="text-3xl font-bold text-white mb-8">{t.sections.contact}</h2>
-                            <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
-                                <a href="mailto:work.distasio@gmail.com" className="flex items-center justify-center gap-3 text-slate-300 hover:text-emerald-400 transition-colors p-4 bg-slate-900 rounded-lg border border-slate-800 hover:border-emerald-500/50">
-                                    <Icon name="mail" />
-                                    work.distasio@gmail.com
-                                </a>
-                            </div>
-                            
-                            <p className="text-xs text-slate-600 max-w-2xl mx-auto italic">
-                                {t.footer.privacy}
-                            </p>
-                            <p className="text-slate-700 mt-8 text-sm">
-                                &copy; {new Date().getFullYear()} Domenico di Stasio. All Rights Reserved.
-                            </p>
-                        </div>
-                    </footer>
+        <!-- 3.11 Aircraft Accidents DB -->
+        <article class="glass-card project-card" data-category="web">
+          <div>
+            <span class="mono-tag">11 // DATABASE ARCHITECTURE • UNIVERSITY OF SALERNO (2021/2022)</span>
+            <h3>Relational Database Design: Aircraft Accidents (NTSB-Inspired)</h3>
+            <p>End-to-end relational database system for managing aviation accident investigations, flight logs, debris classification, and maintenance records.</p>
+            <ul class="project-list-bullets">
+              <li><b>WP3 Lead (Normalization & SQL):</b> Hybrid E-R modeling (Part-of pattern), volume/load redundancy analysis, strict functional dependency verification (1NF, 2NF, 3NF, BCNF), 16 PostgreSQL tables, complex nested queries, Views, and automated <b>PL/pgSQL Triggers</b>.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">PostgreSQL</span>
+              <span class="tech-pill">PL/pgSQL Triggers</span>
+              <span class="tech-pill">E-R Modeling</span>
+              <span class="tech-pill">1NF–BCNF Normalization</span>
+              <span class="tech-pill">Performance Analysis</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>DATA ARCHITECTURE</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
+
+        <!-- 3.12 Statistical Analysis & Regression in R -->
+        <article class="glass-card project-card" data-category="ai">
+          <div>
+            <span class="mono-tag">12 // STATISTICAL MODELING • UNIVERSITY OF SALERNO</span>
+            <h3>Statistical Analysis & Multiple Polynomial Regression in R</h3>
+            <p>End-to-end statistical modeling predicting computer software performance from 6 hardware/system regressors (CPU, HD, Processes, Aging, Audio, RAM).</p>
+            <ul class="project-list-bullets">
+              <li><b>Methodology:</b> IQR outlier detection, Sturges frequency tables, Shapiro-Wilk normality tests, Forward Stepwise Selection (AIC, RSS, Adj-R², ANOVA), and 3rd-degree Orthogonal Polynomial Regression reaching <b>R² = 0.7648</b> with full Cook's distance residual diagnostics and 95% confidence intervals.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">R Language</span>
+              <span class="tech-pill">Polynomial Regression</span>
+              <span class="tech-pill">Stepwise AIC / ANOVA</span>
+              <span class="tech-pill">Shapiro-Wilk</span>
+              <span class="tech-pill">corrplot / plotrix</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>APPLIED STATISTICS</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
+
+        <!-- 3.13 Wireless Networks Optimization -->
+        <article class="glass-card project-card" data-category="embedded">
+          <div>
+            <span class="mono-tag">13 // RF & NETWORKING • UNIVERSITY OF SALERNO</span>
+            <h3>Wireless Network Diagnostics & Mesh Optimization</h3>
+            <p>Spatial RF site survey, interference diagnostics, and dual-band Wi-Fi Mesh optimization for a high-interference 130 sqm residential environment.</p>
+            <ul class="project-list-bullets">
+              <li><b>Site Survey & Solution:</b> Mapped 2.4 GHz & 5 GHz spectrum via NetSpot (Signal Level down to -79 dBm, SIR, channel overlap 1–14 & 36–165, IEEE 802.11ac PHY) and deployed a 4×4 MIMO FRITZ!Repeater 2400 Mesh node, eliminating dead zones.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">Wireless Site Survey</span>
+              <span class="tech-pill">NetSpot</span>
+              <span class="tech-pill">IEEE 802.11ac (2.4/5 GHz)</span>
+              <span class="tech-pill">4×4 MIMO Mesh</span>
+              <span class="tech-pill">SIR & dBm Analysis</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>WIRELESS ENGINEERING</span>
+            <a href="https://github.com/DomenicodiStasio" target="_blank">GITHUB ↗</a>
+          </div>
+        </article>
+
+        <!-- 3.14 Eco-Sustainable Fountain -->
+        <article class="glass-card project-card" data-category="early">
+          <div>
+            <span class="mono-tag">14 // CAD, 3D PRINTING & SYSTEMS • LICEO SCIENTIFICO A. DIAZ (2018/2019)</span>
+            <h3>Technical Design & 3D Prototyping of an Eco-Sustainable Fountain</h3>
+            <p>Architectural, materials, and hydraulic systems design of a 5-basin cascading urban fountain inspired by Frank Lloyd Wright's "Fallingwater" for Naples' Centro Direzionale.</p>
+            <ul class="project-list-bullets">
+              <li><b>Engineering & Prototyping:</b> Selected oxidation-resistant stainless steel, reinforced concrete, and polyurea waterproofing; designed internal pumping, rainwater harvesting, electro-valve level control, PC supervision, 3D photorealistic renders, 3D-printed model, and physical scale maquette.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">3D Modeling & Rendering</span>
+              <span class="tech-pill">3D Printing</span>
+              <span class="tech-pill">Hydraulic & LED Systems</span>
+              <span class="tech-pill">Materials Engineering</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>3D PROTOTYPING</span>
+            <span>PHYSICAL MAQUETTE</span>
+          </div>
+        </article>
+
+        <!-- 3.15 My First Website -->
+        <article class="glass-card project-card" data-category="early">
+          <div>
+            <span class="mono-tag">15 // EARLY WEB DEV • HIGH SCHOOL PROJECT</span>
+            <h3>Static Multi-Page Website ("My First Website")</h3>
+            <p>First multi-page static website focused on sports and workout training, featuring structured HTML navigation (history, athletes, workouts, skills), media integration, and Git version control.</p>
+            <div class="tech-stack">
+              <span class="tech-pill">HTML</span>
+              <span class="tech-pill">Web Architecture</span>
+              <span class="tech-pill">Git / GitHub</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span>EARLY ARCHIVE</span>
+            <a href="https://github.com/DomenicodiStasio/myFirstWebsite" target="_blank">REPO: myFirstWebsite ↗</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 3: FULL MASTER CV (EXPERIENCE, EDU, SKILLS, CONTACTS)
+    =========================================== -->
+    <section id="view-about" class="view-section">
+      <div class="cv-layout">
+        
+        <!-- Left Column: Work Experience + Education -->
+        <div style="display: flex; flex-direction: column; gap: 28px;">
+          
+          <div class="glass-card">
+            <span class="mono-tag">[01 // PROFESSIONAL WORK EXPERIENCE]</span>
+            <h2>Career Timeline</h2>
+            
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-date">03/2026 — PRESENT • FULL-TIME</span>
+                <div class="timeline-role">Software Engineer</div>
+                <span class="timeline-company">ALTEN • Nice, Provence-Alpes-Côte d'Azur, France (Hybrid)</span>
+                <p>Engineering scalable, high-availability cloud-native backend applications and microservices using modern Java and Spring Boot on AWS/Azure. Optimizing development workflows via Docker, Kubernetes, and automated CI/CD pipelines across the full SDLC.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">Java</span>
+                  <span class="tech-pill">Spring Boot</span>
+                  <span class="tech-pill">C++</span>
+                  <span class="tech-pill">SQL</span>
+                  <span class="tech-pill">Microservices</span>
+                  <span class="tech-pill">Docker / K8s</span>
+                  <span class="tech-pill">AWS / Azure</span>
                 </div>
-            );
-        };
+              </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+              <div class="timeline-item">
+                <span class="timeline-date">10/2025 — 04/2026 (7 MOS)</span>
+                <div class="timeline-role">AI Research Engineer</div>
+                <span class="timeline-company">2WheelsPoliTO (MotoStudent Racing Team) • Turin, Italy</span>
+                <p>R&D of a Machine Learning Virtual Sensing and predictive diagnostics framework for track telemetry (CAN bus, IMU, linear potentiometers, GPS). Designed 50 Hz data engineering pipelines, trained Random Forest/XGBoost/LSTM/1D-CNN models, created the Residual Cross-Validation Matrix, and built a real-time Streamlit pit-lane dashboard (<2.3s latency).</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">Python</span>
+                  <span class="tech-pill">Scikit-learn</span>
+                  <span class="tech-pill">Streamlit</span>
+                  <span class="tech-pill">Time-Series AI</span>
+                  <span class="tech-pill">XAI</span>
+                </div>
+              </div>
 
-    </script>
+              <div class="timeline-item">
+                <span class="timeline-date">01/2025 — 08/2025 (8 MOS)</span>
+                <div class="timeline-role">AI Software Engineer (Full-Time Research Intern)</div>
+                <span class="timeline-company">SLB (Schlumberger) • Montpellier, Occitanie, France</span>
+                <p>Led fine-tuning of a deep convolutional foundation model (LogFM) within SLB's Geomechanics Team to predict Mechanical Earth Models (MEMs) from sparse spatial inputs, reducing modeling time from weeks to minutes. Integrated PyTorch, Hugging Face, SHAP interpretability, and Conformal Prediction with the OSDU cloud platform and Techlog.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">Python</span>
+                  <span class="tech-pill">PyTorch</span>
+                  <span class="tech-pill">TensorFlow</span>
+                  <span class="tech-pill">Hugging Face</span>
+                  <span class="tech-pill">XGBoost</span>
+                  <span class="tech-pill">SHAP</span>
+                  <span class="tech-pill">OSDU / Techlog</span>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-date">12/2023 — 10/2024 (11 MOS) • FULL-TIME</span>
+                <div class="timeline-role">Diagnostic Software Owner</div>
+                <span class="timeline-company">SPEA S.p.A. • Turin, Italy</span>
+                <p>End-to-end product lifecycle ownership for hardware/software diagnostic solutions on automated semiconductor and MEMS testing machinery (ATE). Coordinated cross-functional teams and managed direct technical communications with Tier-1 global clients (<b>Apple, Samsung, STMicroelectronics, NXP, Bosch</b>), delivering predictive maintenance software preventing ratusan-thousand-euro downtime incidents.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">Technical Ownership</span>
+                  <span class="tech-pill">Tier-1 Stakeholders</span>
+                  <span class="tech-pill">Predictive Maintenance</span>
+                  <span class="tech-pill">C++ / C# / WPF</span>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-date">03/2023 — 10/2024 (1 YR 8 MOS) • FULL-TIME</span>
+                <div class="timeline-role">R&D Software Engineer</div>
+                <span class="timeline-company">SPEA S.p.A. • Turin, Italy</span>
+                <p>Full-Stack development and optimization of industrial automation software for high-precision machine handlers using C#, C++, WPF (.NET 4.7), REST APIs, and relational DBs. Championed Agile methodologies, structured code reviews, TDD, and CI/CD pipelines.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">C#</span>
+                  <span class="tech-pill">C++</span>
+                  <span class="tech-pill">WPF (.NET 4.7)</span>
+                  <span class="tech-pill">REST APIs</span>
+                  <span class="tech-pill">TDD & CI/CD</span>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-date">09/2022 — 02/2023 (6 MOS)</span>
+                <div class="timeline-role">Software Engineer Intern</div>
+                <span class="timeline-company">Ericsson Telecomunicazioni S.p.A. • Pagani (SA), Italy</span>
+                <p>Full ownership of an internal web application automating and securing legal NDA document workflows with digital signatures using PHP, JavaScript, Bootstrap, and MySQL/PostgreSQL in an Agile environment.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">PHP</span>
+                  <span class="tech-pill">JavaScript</span>
+                  <span class="tech-pill">MySQL / PostgreSQL</span>
+                  <span class="tech-pill">BPMN</span>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-date">12/2018 — 06/2019 (7 MOS)</span>
+                <div class="timeline-role">Cyber Security Fellow</div>
+                <span class="timeline-company">National Cybersecurity Agency (ACN) / CyberChallenge.IT • Univ. of Naples</span>
+                <p>Selected for the highly competitive national offensive/defensive security training program: Reverse Engineering, Web & Binary Exploitation, Advanced Cryptography (AES, RSA), and network defense.</p>
+                <div class="tech-stack" style="margin-bottom:0;">
+                  <span class="tech-pill">Reverse Engineering</span>
+                  <span class="tech-pill">Binary & Web Exploitation</span>
+                  <span class="tech-pill">AES / RSA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <span class="mono-tag">[02 // ACADEMIC EDUCATION]</span>
+            <h2>Education</h2>
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-date">03/2026 • GRADE: 105/110</span>
+                <div class="timeline-role">MSc in Computer Engineering (AI & Data Analytics)</div>
+                <span class="timeline-company">Politecnico di Torino • Turin, Italy</span>
+                <p>Thesis: <i>Applied Machine Learning to Motorsport Telemetry: Diagnostics and Analysis through Predictive Modeling</i> (Advisors: Prof. S. Chiusano, Dr. A. Avignone).</p>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-date">08/2024 — 07/2025</span>
+                <div class="timeline-role">Erasmus+ / MSc in Informatics at Grenoble (MoSIG)</div>
+                <span class="timeline-company">ENSIMAG — Grenoble INP / Université Grenoble Alpes, France</span>
+                <p>Track: Software Systems, Big Data & Cloud Computing. Master Thesis defended July 17, 2025 at Schlumberger (Advisor: Prof. C. Picard).</p>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-date">03/2023</span>
+                <div class="timeline-role">BSc in Computer Engineering</div>
+                <span class="timeline-company">Università degli Studi di Salerno (DIEM) • Fisciano, Italy</span>
+                <p>Thesis: <i>Security and automation of a document workflow with digital signature</i> (Advisor: Prof. F. Moscato; Corporate internship at Ericsson).</p>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-date">2018 / 2019</span>
+                <div class="timeline-role">Scientific High School Diploma</div>
+                <span class="timeline-company">Liceo Scientifico A. Diaz • Caserta, Italy</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Complete Skills Inventory, Awards, Languages & Contacts -->
+        <div style="display: flex; flex-direction: column; gap: 28px;">
+          
+          <div class="glass-card">
+            <span class="mono-tag">[03 // COMPLETE SKILLS INVENTORY]</span>
+            <h2>Technical Arsenal</h2>
+
+            <div class="skill-group">
+              <span class="skill-group-title">PROGRAMMING LANGUAGES</span>
+              <div class="tech-stack" style="margin:0;">
+                <span class="tech-pill">Python</span>
+                <span class="tech-pill">Java</span>
+                <span class="tech-pill">C</span>
+                <span class="tech-pill">C++</span>
+                <span class="tech-pill">C#</span>
+                <span class="tech-pill">Rust</span>
+                <span class="tech-pill">JavaScript</span>
+                <span class="tech-pill">PHP</span>
+                <span class="tech-pill">R</span>
+                <span class="tech-pill">SQL / PL/pgSQL</span>
+                <span class="tech-pill">Assembly (ARM/MIPS)</span>
+                <span class="tech-pill">HTML5 / CSS3</span>
+              </div>
+            </div>
+
+            <div class="skill-group">
+              <span class="skill-group-title">AI, MACHINE LEARNING & DATA SCIENCE</span>
+              <div class="tech-stack" style="margin:0;">
+                <span class="tech-pill">PyTorch</span>
+                <span class="tech-pill">TensorFlow</span>
+                <span class="tech-pill">Hugging Face</span>
+                <span class="tech-pill">Scikit-learn</span>
+                <span class="tech-pill">Random Forest / XGBoost</span>
+                <span class="tech-pill">1D-CNN / LSTM / Bi-LSTM</span>
+                <span class="tech-pill">Transfer Learning</span>
+                <span class="tech-pill">LangChain & LangGraph</span>
+                <span class="tech-pill">n8n / Gemini / Whisper</span>
+                <span class="tech-pill">SHAP (XAI)</span>
+                <span class="tech-pill">Conformal Prediction (Jackknife+)</span>
+              </div>
+            </div>
+
+            <div class="skill-group">
+              <span class="skill-group-title">BIG DATA, CLOUD & DATA ENGINEERING</span>
+              <div class="tech-stack" style="margin:0;">
+                <span class="tech-pill">Apache Spark (PySpark)</span>
+                <span class="tech-pill">Spark Streaming</span>
+                <span class="tech-pill">Hadoop</span>
+                <span class="tech-pill">Apache Kafka</span>
+                <span class="tech-pill">AWS & Azure</span>
+                <span class="tech-pill">Google Cloud Storage</span>
+                <span class="tech-pill">OSDU Platform</span>
+                <span class="tech-pill">Pandas / NumPy / Joblib</span>
+              </div>
+            </div>
+
+            <div class="skill-group">
+              <span class="skill-group-title">BACKEND, ENTERPRISE, WEB & UI/UX</span>
+              <div class="tech-stack" style="margin:0;">
+                <span class="tech-pill">Java Spring Boot</span>
+                <span class="tech-pill">Microservices</span>
+                <span class="tech-pill">Node.js / Express.js</span>
+                <span class="tech-pill">React.js</span>
+                <span class="tech-pill">Streamlit</span>
+                <span class="tech-pill">.NET 4.7 / WPF</span>
+                <span class="tech-pill">PostgreSQL / MySQL / SQLite</span>
+                <span class="tech-pill">Figma & HCI (SUS)</span>
+              </div>
+            </div>
+
+            <div class="skill-group" style="margin-bottom:0;">
+              <span class="skill-group-title">EMBEDDED, DEVOPS & CYBERSECURITY</span>
+              <div class="tech-stack" style="margin:0;">
+                <span class="tech-pill">ARM Cortex-M3 Bare-Metal</span>
+                <span class="tech-pill">CMSIS / Keil uVision</span>
+                <span class="tech-pill">Docker & Kubernetes</span>
+                <span class="tech-pill">CI/CD & TDD</span>
+                <span class="tech-pill">Bonita BPM (BPMN 2.0)</span>
+                <span class="tech-pill">Reverse Engineering & Crypto</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <span class="mono-tag">[04 // HONORS, CERTIFICATIONS & LANGUAGES]</span>
+            <h2>Recognition & Languages</h2>
+            <ul class="project-list-bullets" style="margin-bottom:14px;">
+              <li><b>CyberChallenge.IT Fellowship (ACN):</b> National Cybersecurity Excellence Program (2018–2019).</li>
+              <li><b>Erasmus+ MoSIG Scholarship:</b> International Master's mobility at ENSIMAG Grenoble (2024–2025).</li>
+              <li><b>IELTS Academic Certification:</b> Score 6.0 (B2/C1 Professional & Academic Fluency).</li>
+            </ul>
+            <div class="tech-stack" style="margin-bottom:0;">
+              <span class="tech-pill">🇮🇹 Italian — Native</span>
+              <span class="tech-pill">🇬🇧 English — Fluent (B2/C1)</span>
+              <span class="tech-pill">🇫🇷 French — A2 (1+ yr in France)</span>
+            </div>
+          </div>
+
+          <!-- Contact Section (Target of CONTACT ME button) -->
+          <div class="glass-card" id="contact-card">
+            <span class="mono-tag">[05 // DIRECT CONTACTS]</span>
+            <h2>Get In Touch</h2>
+            <p>Based in Nice, France. Feel free to reach out via email, LinkedIn, or GitHub for engineering collaborations and opportunities.</p>
+            <div class="contact-links">
+              <a href="mailto:work.distasio@gmail.com">
+                <span>EMAIL</span>
+                <span>work.distasio@gmail.com ↗</span>
+              </a>
+              <a href="https://www.linkedin.com/in/domenico-di-stasio-271670161" target="_blank">
+                <span>LINKEDIN</span>
+                <span>/in/domenico-di-stasio-271670161 ↗</span>
+              </a>
+              <a href="https://github.com/DomenicodiStasio" target="_blank">
+                <span>GITHUB</span>
+                <span>github.com/DomenicodiStasio ↗</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+  <!--
+  <div class="hud-controls">
+    <button class="hud-btn" id="toggle-color">COLOR MODE: REAL RGB</button>
+  </div>
+  -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    let currentView = 'home';
+    let viewTargetX = 0;
+    let viewTargetZ = 250;
+    let viewTargetRotY = 0;
+
+    function switchView(viewName, btnElement) {
+      currentView = viewName;
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('view-' + viewName).classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      const bgTitle = document.getElementById('bg-title');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewName === 'home') {
+        bgTitle.classList.remove('dimmed');
+        viewTargetX = 0;
+        viewTargetZ = 250;
+        viewTargetRotY = 0;
+      } else if (viewName === 'projects') {
+        bgTitle.classList.add('dimmed');
+        viewTargetX = 55;
+        viewTargetZ = 285;
+        viewTargetRotY = -0.45;
+      } else if (viewName === 'about') {
+        bgTitle.classList.add('dimmed');
+        viewTargetX = -55;
+        viewTargetZ = 275;
+        viewTargetRotY = 0.45;
+      }
+    }
+
+    // Porta direttamente alla card dei contatti quando si clicca su CONTACT ME
+    function goToContacts() {
+      const aboutBtn = document.querySelectorAll('.nav-btn')[2];
+      switchView('about', aboutBtn);
+      setTimeout(() => {
+        const contactCard = document.getElementById('contact-card');
+        if (contactCard) {
+          contactCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          contactCard.classList.remove('highlight-pulse');
+          void contactCard.offsetWidth;
+          contactCard.classList.add('highlight-pulse');
+        }
+      }, 120);
+    }
+
+    function filterProjects(category, chipElement) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chipElement.classList.add('active');
+
+      document.querySelectorAll('.project-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    const canvas = document.getElementById('webgl-canvas');
+    const banner = document.getElementById('local-unlock-banner');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 250;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    let particleSystem = null;
+    let basePositions = [];
+    let realColors = [];
+    let holoColors = [];
+    // Impostato su Real RGB di default come richiesto!
+    let isHoloMode = false;
+
+    function buildPointCloudFromImage(imageElement) {
+      if (particleSystem) {
+        scene.remove(particleSystem);
+        particleSystem.geometry.dispose();
+        particleSystem.material.dispose();
+      }
+      basePositions = [];
+      realColors = [];
+      holoColors = [];
+
+      const gridWidth = 220;
+      const gridHeight = Math.floor(gridWidth * (imageElement.height / imageElement.width));
+
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = gridWidth;
+      offCanvas.height = gridHeight;
+      const ctx = offCanvas.getContext('2d');
+      ctx.drawImage(imageElement, 0, 0, gridWidth, gridHeight);
+
+      const imgData = ctx.getImageData(0, 0, gridWidth, gridHeight).data;
+      const positions = [];
+      const colors = [];
+
+      for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+          const i = (y * gridWidth + x) * 4;
+          const r = imgData[i] / 255;
+          const g = imgData[i + 1] / 255;
+          const b = imgData[i + 2] / 255;
+          const a = imgData[i + 3] / 255;
+
+          const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+          if (a < 0.1 || brightness < 0.06) continue;
+
+          const normX = (x / gridWidth) - 0.5;
+          const normY = (y / gridHeight) - 0.5;
+          const distFromCenter = Math.sqrt(normX * normX * 1.6 + (normY + 0.05) * (normY + 0.05));
+
+          const px = (x - gridWidth / 2) * 0.75;
+          const py = -(y - gridHeight / 2) * 0.75;
+          const faceCurve = Math.max(0, 1 - distFromCenter * 2.1) * 28;
+          const pz = (brightness * 36) + faceCurve + (Math.random() - 0.5) * 2.5;
+
+          positions.push(px, py, pz);
+          basePositions.push(px, py, pz);
+
+          // Real RGB Colors
+          realColors.push(Math.min(1, r * 1.15), Math.min(1, g * 1.1), Math.min(1, b * 1.05));
+
+          // Copper Holo Mode (sfumatura ramata anziché gialla)
+          const tint = Math.min(1, brightness + 0.25);
+          holoColors.push(
+            tint,
+            tint * 0.78,
+            tint * 0.62
+          );
+
+          const activeColor = isHoloMode ? holoColors : realColors;
+          colors.push(
+            activeColor[activeColor.length - 3],
+            activeColor[activeColor.length - 2],
+            activeColor[activeColor.length - 1]
+          );
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: 1.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.92,
+        blending: THREE.AdditiveBlending
+      });
+
+      particleSystem = new THREE.Points(geometry, material);
+      scene.add(particleSystem);
+      banner.style.display = 'none';
+    }
+
+    const autoImg = new Image();
+    autoImg.crossOrigin = "Anonymous";
+    autoImg.onload = () => {
+      buildPointCloudFromImage(autoImg);
+    };
+    autoImg.onerror = () => {
+      banner.style.display = 'block';
+    };
+    autoImg.src = 'profile.jpg';
+
+    function handleLocalFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const localImg = new Image();
+        localImg.onload = () => buildPointCloudFromImage(localImg);
+        localImg.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      handleLocalFile(e.target.files[0]);
+    });
+
+    window.addEventListener('dragover', (e) => e.preventDefault());
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length > 0) {
+        handleLocalFile(e.dataTransfer.files[0]);
+      }
+    });
+    /*
+    document.getElementById('toggle-color').addEventListener('click', (e) => {
+      if (!particleSystem) return;
+      isHoloMode = !isHoloMode;
+      e.target.innerText = isHoloMode ? "COLOR MODE: COPPER HOLO" : "COLOR MODE: REAL RGB";
+      const colorAttr = particleSystem.geometry.attributes.color;
+      const source = isHoloMode ? holoColors : realColors;
+      for (let i = 0; i < source.length; i++) {
+        colorAttr.array[i] = source[i];
+      }
+      colorAttr.needsUpdate = true;
+    });
+    */
+
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      camera.position.z += (viewTargetZ - camera.position.z) * 0.05;
+
+      if (particleSystem) {
+        const targetRotY = viewTargetRotY + (mouseX * 0.35);
+        const targetRotX = -mouseY * 0.2;
+
+        particleSystem.rotation.y += (targetRotY - particleSystem.rotation.y) * 0.06;
+        particleSystem.rotation.x += (targetRotX - particleSystem.rotation.x) * 0.06;
+        particleSystem.position.x += (viewTargetX - particleSystem.position.x) * 0.05;
+
+        const posAttr = particleSystem.geometry.attributes.position;
+        const mX = (mouseX * 110) - particleSystem.position.x;
+        const mY = mouseY * 110;
+
+        for (let i = 0; i < posAttr.count; i++) {
+          const ix = i * 3;
+          const bx = basePositions[ix];
+          const by = basePositions[ix + 1];
+          const bz = basePositions[ix + 2];
+
+          const dx = bx - mX;
+          const dy = by - mY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          const force = Math.max(0, (42 - dist) / 42);
+          const wave = Math.sin(elapsed * 2.2 + bx * 0.05 + by * 0.05) * 1.2;
+
+          posAttr.array[ix]     = bx + (dx / (dist || 1)) * force * 12;
+          posAttr.array[ix + 1] = by + (dy / (dist || 1)) * force * 12;
+          posAttr.array[ix + 2] = bz + wave + (force * 22);
+        }
+        posAttr.needsUpdate = true;
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
-
 </html>
