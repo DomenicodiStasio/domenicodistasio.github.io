@@ -13,7 +13,7 @@
   <style>
     :root {
       --bg: #050507;
-      --panel-bg: rgba(14, 12, 12, 0.74);
+      --panel-bg: rgba(14, 12, 12, 0.76);
       --border: rgba(255, 255, 255, 0.1);
       --text: #f5f2f0;
       --muted: #9e9692;
@@ -52,7 +52,7 @@
       top: 16%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: clamp(3rem, 9.8vw, 11.5rem);
+      font-size: clamp(2.4rem, 9.8vw, 11.5rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       white-space: nowrap;
@@ -78,13 +78,15 @@
       align-items: center;
       gap: 10px;
       padding: 8px 14px;
-      background: rgba(18, 15, 14, 0.82);
+      background: rgba(18, 15, 14, 0.85);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 999px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.76rem;
       box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      max-width: 96vw;
     }
 
     .brand-status {
@@ -103,11 +105,12 @@
       background: var(--accent-bright);
       border-radius: 50%;
       box-shadow: 0 0 10px var(--accent-bright);
+      flex-shrink: 0;
     }
 
     .nav-btn {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--muted);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.76rem;
@@ -125,7 +128,7 @@
     .nav-btn.active {
       background: var(--accent-glow);
       color: var(--accent-bright);
-      border: 1px solid rgba(217, 107, 56, 0.5);
+      border-color: rgba(217, 107, 56, 0.5);
     }
 
     .nav-cta {
@@ -162,6 +165,7 @@
       font-family: 'JetBrains Mono', monospace;
       box-shadow: 0 0 40px var(--accent-glow);
       display: none;
+      width: 90%;
       max-width: 440px;
     }
 
@@ -226,6 +230,7 @@
       pointer-events: auto;
       background: var(--panel-bg);
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       padding: 28px;
       border-radius: 16px;
@@ -238,6 +243,10 @@
 
     .hero-bio-card {
       max-width: 520px;
+    }
+
+    .profile-status-card {
+      max-width: 360px;
     }
 
     .mono-tag {
@@ -257,7 +266,7 @@
     }
 
     h2 {
-      font-size: clamp(1.45rem, 2.4vw, 2.15rem);
+      font-size: clamp(1.35rem, 2.4vw, 2.15rem);
     }
 
     p {
@@ -281,6 +290,7 @@
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s ease;
+      text-align: center;
     }
 
     .btn-primary {
@@ -327,6 +337,7 @@
       color: var(--muted);
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
     .filter-chip.active, .filter-chip:hover {
@@ -337,7 +348,7 @@
 
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 22px;
     }
 
@@ -392,6 +403,8 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.74rem;
       color: var(--muted);
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .project-footer a {
@@ -408,20 +421,6 @@
       display: grid;
       grid-template-columns: 1.38fr 1fr;
       gap: 28px;
-    }
-
-    @media (max-width: 920px) {
-      .cv-layout {
-        grid-template-columns: 1fr;
-      }
-      .projects-grid {
-        grid-template-columns: 1fr;
-      }
-      header {
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 94%;
-      }
     }
 
     .timeline {
@@ -500,7 +499,15 @@
       border: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 10px;
       transition: all 0.2s;
+      word-break: break-all;
+    }
+
+    .contact-links a span:first-child {
+      flex-shrink: 0;
+      color: var(--accent-bright);
     }
 
     .contact-links a:hover {
@@ -520,30 +527,142 @@
       100% { box-shadow: 0 0 0 0 rgba(240, 130, 79, 0); }
     }
 
-    .hud-controls {
+    /* Popup temporaneo (Toast) per conferma copia Email */
+    #copy-toast {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 30;
-      display: flex;
-      gap: 10px;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--accent);
+      color: #fff;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 20px var(--accent-glow);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      white-space: nowrap;
+      max-width: 92vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .hud-btn {
-      background: rgba(18, 15, 14, 0.85);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
+    #copy-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    .hud-btn:hover {
-      border-color: var(--accent-bright);
-      color: var(--accent-bright);
+    /* ==========================================
+       RESPONSIVE DESIGN (TABLET & SMARTPHONE)
+    =========================================== */
+    @media (max-width: 960px) {
+      .cv-layout {
+        grid-template-columns: 1fr;
+      }
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        top: 12px;
+        width: 95vw;
+        padding: 6px 8px;
+        gap: 4px;
+        justify-content: space-between;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      header::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Nasconde il nome nella barra mobile per far stare tutti i bottoni su 1 riga */
+      .brand-status {
+        display: none;
+      }
+
+      .nav-btn {
+        font-size: 0.68rem;
+        padding: 6px 10px;
+        flex-shrink: 0;
+      }
+
+      .nav-cta {
+        font-size: 0.68rem;
+        padding: 6px 12px;
+        margin-left: 2px;
+        flex-shrink: 0;
+      }
+
+      .hero-bg-text {
+        top: 11%;
+        font-size: clamp(2.1rem, 11.5vw, 4.2rem);
+      }
+
+      main {
+        padding: 76px 4vw 60px;
+      }
+
+      /* Su mobile lascia spazio in alto per vedere bene il volto 3D prima delle card */
+      .home-layout {
+        min-height: calc(100vh - 90px);
+        justify-content: flex-end;
+        padding-top: 44vh;
+        padding-bottom: 10px;
+      }
+
+      .home-grid {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .hero-bio-card,
+      .profile-status-card {
+        max-width: 100% !important;
+      }
+
+      .glass-card {
+        padding: 20px;
+        border-radius: 14px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-primary,
+      .btn-outline {
+        width: 100%;
+        padding: 12px 16px;
+      }
+
+      /* Barra filtri scorrevole orizzontalmente su telefono */
+      .filter-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        margin-bottom: 20px;
+        scrollbar-width: none;
+      }
+
+      .filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .contact-links a {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
     }
   </style>
 </head>
@@ -591,7 +710,7 @@
             </div>
           </div>
 
-          <div class="glass-card" style="max-width: 360px;">
+          <div class="glass-card profile-status-card">
             <span class="mono-tag">[CURRENT PROFILE]</span>
             <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.77rem; color: var(--text); line-height: 1.75;">
               📍 Nice, Provence-Alpes-Côte d'Azur, FR<br>
@@ -1238,9 +1357,9 @@
             <h2>Get In Touch</h2>
             <p>Based in Nice, France. Feel free to reach out via email, LinkedIn, or GitHub for engineering collaborations and opportunities.</p>
             <div class="contact-links">
-              <a href="mailto:work.distasio@gmail.com">
+              <a href="#" onclick="copyEmail(event)">
                 <span>EMAIL</span>
-                <span>work.distasio@gmail.com ↗</span>
+                <span id="email-action-text">work.distasio@gmail.com [COPY ⧉]</span>
               </a>
               <a href="https://www.linkedin.com/in/domenico-di-stasio-271670161" target="_blank">
                 <span>LINKEDIN</span>
@@ -1257,18 +1376,37 @@
       </div>
     </section>
   </main>
-  <!--
-  <div class="hud-controls">
-    <button class="hud-btn" id="toggle-color">COLOR MODE: REAL RGB</button>
-  </div>
-  -->
+
+  <div id="copy-toast">✓ Email copied to clipboard: work.distasio@gmail.com</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     let currentView = 'home';
+    let isMobile = window.innerWidth <= 768;
     let viewTargetX = 0;
-    let viewTargetZ = 250;
+    let viewTargetY = isMobile ? 28 : 0;
+    let viewTargetZ = isMobile ? 320 : 250;
     let viewTargetRotY = 0;
+
+    function updateResponsiveTargets() {
+      isMobile = window.innerWidth <= 768;
+      if (currentView === 'home') {
+        viewTargetX = 0;
+        viewTargetY = isMobile ? 28 : 0;
+        viewTargetZ = isMobile ? 320 : 250;
+        viewTargetRotY = 0;
+      } else if (currentView === 'projects') {
+        viewTargetX = isMobile ? 0 : 55;
+        viewTargetY = isMobile ? 12 : 0;
+        viewTargetZ = isMobile ? 350 : 285;
+        viewTargetRotY = isMobile ? -0.25 : -0.45;
+      } else if (currentView === 'about') {
+        viewTargetX = isMobile ? 0 : -55;
+        viewTargetY = isMobile ? 12 : 0;
+        viewTargetZ = isMobile ? 350 : 275;
+        viewTargetRotY = isMobile ? 0.25 : 0.45;
+      }
+    }
 
     function switchView(viewName, btnElement) {
       currentView = viewName;
@@ -1283,20 +1421,10 @@
 
       if (viewName === 'home') {
         bgTitle.classList.remove('dimmed');
-        viewTargetX = 0;
-        viewTargetZ = 250;
-        viewTargetRotY = 0;
-      } else if (viewName === 'projects') {
+      } else {
         bgTitle.classList.add('dimmed');
-        viewTargetX = 55;
-        viewTargetZ = 285;
-        viewTargetRotY = -0.45;
-      } else if (viewName === 'about') {
-        bgTitle.classList.add('dimmed');
-        viewTargetX = -55;
-        viewTargetZ = 275;
-        viewTargetRotY = 0.45;
       }
+      updateResponsiveTargets();
     }
 
     // Porta direttamente alla card dei contatti quando si clicca su CONTACT ME
@@ -1311,7 +1439,32 @@
           void contactCard.offsetWidth;
           contactCard.classList.add('highlight-pulse');
         }
-      }, 120);
+      }, 150);
+    }
+
+    // Copia l'email negli appunti e mostra il popup temporaneo
+    let toastTimeout;
+    function copyEmail(event) {
+      event.preventDefault();
+      const email = 'work.distasio@gmail.com';
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(email);
+      } else {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = email;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+      }
+
+      const toast = document.getElementById('copy-toast');
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
     }
 
     function filterProjects(category, chipElement) {
@@ -1332,7 +1485,7 @@
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 250;
+    camera.position.z = viewTargetZ;
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1341,9 +1494,6 @@
     let particleSystem = null;
     let basePositions = [];
     let realColors = [];
-    let holoColors = [];
-    // Impostato su Real RGB di default come richiesto!
-    let isHoloMode = false;
 
     function buildPointCloudFromImage(imageElement) {
       if (particleSystem) {
@@ -1353,7 +1503,6 @@
       }
       basePositions = [];
       realColors = [];
-      holoColors = [];
 
       const gridWidth = 220;
       const gridHeight = Math.floor(gridWidth * (imageElement.height / imageElement.width));
@@ -1392,22 +1541,11 @@
           basePositions.push(px, py, pz);
 
           // Real RGB Colors
-          realColors.push(Math.min(1, r * 1.15), Math.min(1, g * 1.1), Math.min(1, b * 1.05));
-
-          // Copper Holo Mode (sfumatura ramata anziché gialla)
-          const tint = Math.min(1, brightness + 0.25);
-          holoColors.push(
-            tint,
-            tint * 0.78,
-            tint * 0.62
-          );
-
-          const activeColor = isHoloMode ? holoColors : realColors;
-          colors.push(
-            activeColor[activeColor.length - 3],
-            activeColor[activeColor.length - 2],
-            activeColor[activeColor.length - 1]
-          );
+          const cr = Math.min(1, r * 1.15);
+          const cg = Math.min(1, g * 1.1);
+          const cb = Math.min(1, b * 1.05);
+          realColors.push(cr, cg, cb);
+          colors.push(cr, cg, cb);
         }
       }
 
@@ -1416,7 +1554,7 @@
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
       const material = new THREE.PointsMaterial({
-        size: 1.5,
+        size: isMobile ? 1.35 : 1.5,
         vertexColors: true,
         transparent: true,
         opacity: 0.92,
@@ -1424,12 +1562,12 @@
       });
 
       particleSystem = new THREE.Points(geometry, material);
+      particleSystem.position.y = viewTargetY;
       scene.add(particleSystem);
       banner.style.display = 'none';
     }
 
     const autoImg = new Image();
-    autoImg.crossOrigin = "Anonymous";
     autoImg.onload = () => {
       buildPointCloudFromImage(autoImg);
     };
@@ -1460,24 +1598,32 @@
         handleLocalFile(e.dataTransfer.files[0]);
       }
     });
-    /*
-    document.getElementById('toggle-color').addEventListener('click', (e) => {
-      if (!particleSystem) return;
-      isHoloMode = !isHoloMode;
-      e.target.innerText = isHoloMode ? "COLOR MODE: COPPER HOLO" : "COLOR MODE: REAL RGB";
-      const colorAttr = particleSystem.geometry.attributes.color;
-      const source = isHoloMode ? holoColors : realColors;
-      for (let i = 0; i < source.length; i++) {
-        colorAttr.array[i] = source[i];
-      }
-      colorAttr.needsUpdate = true;
-    });
-    */
 
+    // Gestione interazione Mouse (PC) e Touch (Smartphone)
+    // isPointerActive = false all'avvio evita che il volto si apra con un buco al centro!
     let mouseX = 0, mouseY = 0;
+    let isPointerActive = false;
+
     window.addEventListener('mousemove', (e) => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+      isPointerActive = true;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      isPointerActive = false;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        mouseY = -(e.touches[0].clientY / window.innerHeight - 0.5) * 2;
+        isPointerActive = true;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      isPointerActive = false;
     });
 
     const clock = new THREE.Clock();
@@ -1488,16 +1634,22 @@
       camera.position.z += (viewTargetZ - camera.position.z) * 0.05;
 
       if (particleSystem) {
-        const targetRotY = viewTargetRotY + (mouseX * 0.35);
-        const targetRotX = -mouseY * 0.2;
+        // Su mobile o quando il mouse è fermo, fa una leggera oscillazione naturale
+        const idleSwayY = !isPointerActive ? Math.sin(elapsed * 0.6) * 0.14 : 0;
+        const idleSwayX = !isPointerActive ? Math.cos(elapsed * 0.4) * 0.05 : 0;
+
+        const targetRotY = viewTargetRotY + (isPointerActive ? mouseX * 0.35 : idleSwayY);
+        const targetRotX = isPointerActive ? -mouseY * 0.2 : idleSwayX;
 
         particleSystem.rotation.y += (targetRotY - particleSystem.rotation.y) * 0.06;
         particleSystem.rotation.x += (targetRotX - particleSystem.rotation.x) * 0.06;
         particleSystem.position.x += (viewTargetX - particleSystem.position.x) * 0.05;
+        particleSystem.position.y += (viewTargetY - particleSystem.position.y) * 0.05;
 
         const posAttr = particleSystem.geometry.attributes.position;
-        const mX = (mouseX * 110) - particleSystem.position.x;
-        const mY = mouseY * 110;
+        // Se non stai toccando o muovendo il mouse, sposta il centro di repulsione fuori schermo (9999)
+        const mX = isPointerActive ? (mouseX * 110) - particleSystem.position.x : 9999;
+        const mY = isPointerActive ? (mouseY * 110) - particleSystem.position.y : 9999;
 
         for (let i = 0; i < posAttr.count; i++) {
           const ix = i * 3;
@@ -1509,7 +1661,7 @@
           const dy = by - mY;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          const force = Math.max(0, (42 - dist) / 42);
+          const force = isPointerActive ? Math.max(0, (42 - dist) / 42) : 0;
           const wave = Math.sin(elapsed * 2.2 + bx * 0.05 + by * 0.05) * 1.2;
 
           posAttr.array[ix]     = bx + (dx / (dist || 1)) * force * 12;
@@ -1527,6 +1679,7 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      updateResponsiveTargets();
     });
   </script>
 </body>
